@@ -1,22 +1,26 @@
 import React from "react";
 import { signal, effect } from "@preact/signals-react";
 
-// const generateUniqueId = () => {
-//   return Math.random().toString(36).substr(2, 9);
-// };
+const Footer = () => {
+  console.log("footer rendered");
+  return <div>Footer</div>;
+}
+const generateUniqueId = () => {
+  return Math.random().toString(36).substr(2, 9);
+};
+
+const getData = () => {
+  const value = localStorage.getItem("todos");
+  if (value === null) return [];
+  return JSON.parse(value);
+};
 //
-// const getData = () => {
-//   const value = localStorage.getItem("todos");
-//   if (value === null) return [];
-//   return JSON.parse(value);
-// };
-//
-// export const todos = signal(getData());
+export const todos = signal(getData());
 const inputValue = signal("");
 
-// effect(() => {
-//   localStorage.setItem("todos", JSON.stringify(todos.value));
-// });
+effect(() => {
+  localStorage.setItem("todos", JSON.stringify(todos.value));
+});
 
 const Todos = () => {
 
@@ -24,24 +28,24 @@ const Todos = () => {
   const addTodo = (e) => {
     if (inputValue.value === "") return;
     e.preventDefault();
-    // todos.value = [
-    //   ...todos.value,
-    //   { id: generateUniqueId(), name: inputValue.value, isCompleted: false },
-    // ];
-    // inputValue.value = "";
+    todos.value = [
+      ...todos.value,
+      { id: generateUniqueId(), name: inputValue.value, isCompleted: false },
+    ];
+    inputValue.value = "";
 
     console.log(inputValue.value)
   };
 
-  // const onTodoChange = (e, todo) => {
-  //  const isCompleted = e.target.checked;
-  //   todos.value = todos.value.map((t) => {
-  //     if (t.id === todo.id) {
-  //       return { ...t, isCompleted };
-  //     }
-  //     return t;
-  //   });
-  // };
+  const onTodoChange = (e, todo) => {
+   const isCompleted = e.target.checked;
+    todos.value = todos.value.map((t) => {
+      if (t.id === todo.id) {
+        return { ...t, isCompleted };
+      }
+      return t;
+    });
+  };
   return (
     <div>
       <div className="max-w-500 flex-center gap-5">
@@ -65,16 +69,17 @@ const Todos = () => {
         />
       </div>
       <h2>Todos</h2>
-      {/*{todos.value.map((todo) => (*/}
-      {/*  <div key={todo.id} className="flex-center">*/}
-      {/*    <input*/}
-      {/*      type="checkbox"*/}
-      {/*      checked={todo.isCompleted}*/}
-      {/*      onChange={(e) => onTodoChange(e, todo)}*/}
-      {/*    />*/}
-      {/*    <p>{todo.name}</p>*/}
-      {/*  </div>*/}
-      {/*))}*/}
+      {todos.value.map((todo) => (
+        <div key={todo.id} className="flex-center">
+          <input
+            type="checkbox"
+            checked={todo.isCompleted}
+            onChange={(e) => onTodoChange(e, todo)}
+          />
+          <p>{todo.name}</p>
+        </div>
+      ))}
+      <Footer/>
     </div>
   );
 };
